@@ -152,15 +152,3 @@ To read it in Python: `from results_io import load_results2; R2 = load_results2(
 * Small differences in the last digit are possible on other CPUs or package versions because of
   floating-point summation order in the network training.
 
-## License
-
-Code: MIT License (see `LICENSE`). Data files (`results.json`, `results2.json.gz`, `models.pkl`, tables and
-figures): Creative Commons Attribution 4.0 International (CC BY 4.0).
-
-## How to cite
-
-Please cite the article above and this archive (see `CITATION.cff`; the DOI is assigned by Zenodo).
-
-## Contact
-
-Oleksii I. Sheremet, Donbas State Engineering Academy, Kramatorsk, Ukraine – oleksii.sheremet@ddma.edu.ua

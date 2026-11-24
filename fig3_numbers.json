@@ -1,0 +1,18 @@
+{
+ "Fixed N-i (monograph)": {
+  "ts": 0.6351500000000001,
+  "Mpk_over_Mmax": 1.3081623452704219,
+  "overshoot": 0.0
+ },
+ "Rescheduled N-i": {
+  "ts": Infinity,
+  "Mpk_over_Mmax": 1.0086456077996755,
+  "overshoot": 0.0
+ },
+ "PG-MLP scheduled": {
+  "ts": 0.21932000000000001,
+  "Mpk_over_Mmax": 1.011302954161471,
+  "overshoot": 0.003995399038998898
+ },
+ "Tstar": 0.23910147952372793
+}

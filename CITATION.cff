@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the article and this archive."
+title: "Physics-guided learning of switching coefficients for near-time-optimal relay control of a DC positioning drive: code and data"
+version: 1.0.0
+date-released: 2026-11-25
+license: MIT
+type: software
+authors:
+  - family-names: Sheremet
+    given-names: Oleksii I.
+    orcid: "https://orcid.org/0000-0003-1298-3617"
+    affiliation: "Donbas State Engineering Academy, Kramatorsk, Ukraine"
+  - family-names: Sadovoi
+    given-names: Oleksandr V.
+    orcid: "https://orcid.org/0000-0001-9739-3661"
+    affiliation: "Dniprovsky State Technical University, Kamianske, Ukraine"
+  - family-names: Sokhina
+    given-names: Yuliia V.
+    orcid: "https://orcid.org/0000-0002-4329-5182"
+    affiliation: "Dniprovsky State Technical University, Kamianske, Ukraine"
+  - family-names: Kiriienko
+    given-names: Tetiana V.
+    orcid: "https://orcid.org/0000-0001-5076-3119"
+    affiliation: "Donbas State Engineering Academy, Kramatorsk, Ukraine"
+keywords:
+  - electric drive
+  - relay control
+  - sliding mode
+  - near-time-optimal control
+  - physics-guided machine learning
+  - gain scheduling
+preferred-citation:
+  type: article
+  title: "Physics-guided learning of switching coefficients for near-time-optimal relay control of a direct-current positioning drive"
+  journal: "Informatics. Culture. Technology"
+  year: 2026
+  authors:
+    - family-names: Sheremet
+      given-names: Oleksii I.
+    - family-names: Sadovoi
+      given-names: Oleksandr V.
+    - family-names: Sokhina
+      given-names: Yuliia V.
+    - family-names: Kiriienko
+      given-names: Tetiana V.

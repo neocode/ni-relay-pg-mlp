@@ -1,0 +1,15 @@
+{
+  "title": "Physics-guided learning of switching coefficients for near-time-optimal relay control of a DC positioning drive: code and data",
+  "upload_type": "software",
+  "description": "<p>Simulation code, oracle labels, trained models, evaluation results, tables and figures that reproduce the article “Physics-guided learning of switching coefficients for near-time-optimal relay control of a direct-current positioning drive” (Informatics. Culture. Technology, 2026). The archive contains a model of a DC positioning drive with a relay cascade synthesised by the N-i switching method, simulation-based optimisation of the switching coefficients, a physics-guided scheduler (square-root scaling law plus a residual multilayer-perceptron ensemble), baselines, an ablation study and the evaluation on 2500 test moves. See README.md for instructions.</p>",
+  "creators": [
+    {"name": "Sheremet, Oleksii I.", "affiliation": "Donbas State Engineering Academy", "orcid": "0000-0003-1298-3617"},
+    {"name": "Sadovoi, Oleksandr V.", "affiliation": "Dniprovsky State Technical University", "orcid": "0000-0001-9739-3661"},
+    {"name": "Sokhina, Yuliia V.", "affiliation": "Dniprovsky State Technical University", "orcid": "0000-0002-4329-5182"},
+    {"name": "Kiriienko, Tetiana V.", "affiliation": "Donbas State Engineering Academy", "orcid": "0000-0001-5076-3119"}
+  ],
+  "keywords": ["electric drive", "relay control", "sliding mode", "near-time-optimal control", "physics-guided machine learning", "gain scheduling"],
+  "license": "MIT",
+  "access_right": "open",
+  "language": "eng"
+}

@@ -48,7 +48,7 @@ S = pd.DataFrame(R1['sens'])
 say('Sensitivity (Fig. 2, b), median tau vs relative error of K12:',
     {f'{100 * (np.exp(k) - 1):+.0f} %': round(v, 3) for k, v in S.groupby('d').tau.median().items()})
 
-say('\n== Seed groups (five disjoint groups of five seeds, 500 moves)')
+say('\n== Seed groups (five disjoint groups of five seeds, first 500 moves; all 2500 moves: extensions.txt)')
 s = pd.DataFrame(R2['seed_rows'])
 g = s.groupby(['method', 'group']).tau1.max().groupby('method').agg(['mean', 'std'])
 for m, row in g.iterrows():
@@ -75,7 +75,7 @@ for m in ('PG-MLP', 'PG-MLP margin'):
 
 say('\n== Implementation')
 say('Safeguard (12) active in', R2['safeguard_active'], 'of', R2['n_big'], 'moves')
-say(f"PG-MLP: {R1['n_par']} parameters per network, one prediction {1e3 * R1['t_inf']:.2f} ms (Python)")
+say(f"PG-MLP: {R1['n_par']} parameters per network (inference timings: see deployment.txt)")
 text = '\n'.join(lines)
 open('checks.txt', 'w', encoding='utf-8').write(text + '\n')
 print(text)

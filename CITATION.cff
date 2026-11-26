@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this code or data, please cite the article and this archive."
-title: "Physics-guided learning of switching coefficients for near-time-optimal relay control of a DC positioning drive: code and data"
-version: 1.0.0
-date-released: 2026-11-25
+title: "Physics-guided data-driven scheduler of switching coefficients for near-time-optimal relay control of a positioning electric drive: code and data"
+version: 1.1.0
+date-released: 2026-11-26
 license: MIT
 type: software
 authors:
@@ -31,8 +31,7 @@ keywords:
   - gain scheduling
 preferred-citation:
   type: article
-  title: "Physics-guided learning of switching coefficients for near-time-optimal relay control of a direct-current positioning drive"
-  journal: "Informatics. Culture. Technology"
+  title: "Physics-guided data-driven scheduler of switching coefficients for near-time-optimal relay control of a positioning electric drive"
   year: 2026
   authors:
     - family-names: Sheremet

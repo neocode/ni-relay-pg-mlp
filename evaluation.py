@@ -1,8 +1,9 @@
-"""Step 2 - closed-loop evaluation of all controllers (Tables 2-4 and the numbers quoted in the text).
+"""Step 2 - closed-loop evaluation of all controllers (results tables of the paper and numbers quoted in the text;
+see the mapping in README.md).
 
 Uses the oracle labels of experiment.py (results.json) and:
-* builds the schedulers: law (11), 2-D look-up table on raw inputs, MLP on raw inputs, the proposed
-  PG-MLP (law + residual ensemble, Eq. (12)) and the ablation variants (Table 3);
+* builds the schedulers: law (11), 2-D look-up table on raw inputs, MLP on raw inputs, the physics-guided
+  PG-MLP (law + residual ensemble, Eq. (12)) and the ablation variants;
 * adds the analytic baselines: fixed N-i design, rescheduled N-i design, amplitude-adaptive N-i design;
 * evaluates every controller on 2500 test moves (seed 2027: 2000 moves log-uniform in A and uniform in
   kappa, plus 500 moves from the same distribution retained only if 0.5 <= rho <= 2), with the exact
@@ -53,7 +54,7 @@ def build(seeds=range(5)):
     return dict(
         raw=(sx, mlp(sx.transform(raw(train)), Ytr, seeds)),                 # MLP on raw inputs
         dimless=(sp, mlp(sp.transform(phy(train)), Ytr, seeds)),             # (log rho, kappa), no law
-        pg=(sp, mlp(sp.transform(phy(train)), Rtr, seeds)),                  # proposed PG-MLP
+        pg=(sp, mlp(sp.transform(phy(train)), Rtr, seeds)),                  # physics-guided PG-MLP
         pg_nok=(sr, mlp(sr.transform(phy(train)[:, :1]), Rtr, seeds)),       # without kappa_hat
         pg_single=(sp, mlp(sp.transform(phy(train)), Rtr, [list(seeds)[0]])),  # single network
         pg_k12=(sp, mlp(sp.transform(phy(train)), Rtr[:, 0], seeds)))         # K12 only
@@ -179,7 +180,7 @@ if __name__ == '__main__':
         P = predict(m, test40, M)
         rmse[m] = [float(v) for v in np.sqrt(np.mean((P - Y40) ** 2, axis=0))]
         max_rel[m] = [float(v) for v in (np.exp(np.abs(P - Y40)) - 1).max(axis=0)]
-    # integration-step study: the Fig. 3 move and three labelled moves
+    # integration-step study: the Fig. 5 move and three labelled moves
     conv = []
     for (a, k) in [(0.05, 1.3)] + test40[:3]:
         for name in ('Rescheduled N-i', 'PG-MLP'):

@@ -9,7 +9,7 @@
 
 | Controller | tau1 median | tau1 99 % | tau1 max | overshoot max, % | Mpk/Mmax max | wpk/wmax max |
 |---|---|---|---|---|---|---|
-| Fixed N-i [1] | 1.866 | 10.694 | 13.628 | 0.17 | 1.915 | 1.000 |
+| Fixed N-i design | 1.866 | 10.694 | 13.628 | 0.17 | 1.915 | 1.000 |
 | Rescheduled N-i | 1.948 | 12.723 | 14.648 | 0.03 | 1.016 | 1.000 |
 | Amplitude-adaptive N-i | 1.004 | 1.456 | 1.531 | 4.76 | 1.016 | 1.000 |
 | Law (11) | 1.002 | 1.415 | 1.416 | 3.04 | 1.016 | 1.000 |
@@ -17,9 +17,8 @@
 | MLP (raw inputs) | 0.993 | 1.368 | 1.400 | 3.12 | 1.016 | 1.000 |
 | PG-MLP | 0.987 | 0.996 | 1.006 | 0.93 | 1.016 | 1.000 |
 | PG-MLP, margin kappa_hat/0.9 | 1.040 | 1.054 | 1.066 | 0.92 | 0.917 | 1.000 |
-| Oracle (40 moves only) | 0.987 | 0.992 | 0.993 | 0.50 | 1.016 | 1.000 |
 
-### Table 3. Ablation of the physics-guided scheduler (2500 test moves)
+### Table 4. Ablation of the physics-guided scheduler (2500 test moves; further rows in extensions.txt)
 
 | Variant | RMSE x12 (40 moves) | tau1 median | tau1 99 % | tau1 max | overshoot max, % |
 |---|---|---|---|---|---|
@@ -29,9 +28,9 @@
 | PG-MLP without kappa_hat | 0.0061 | 0.991 | 1.012 | 1.203 | 1.32 |
 | PG-MLP, single network | 0.0029 | 0.988 | 1.120 | 1.160 | 1.29 |
 | PG-MLP, K12 only | 0.0041 | 0.990 | 1.346 | 1.352 | 1.99 |
-| PG-MLP (proposed) | 0.0023 | 0.987 | 0.996 | 1.006 | 0.93 |
+| PG-MLP (reference implementation) | 0.0023 | 0.987 | 0.996 | 1.006 | 0.93 |
 
-### Table 4. Robustness of PG-MLP under inertia estimation errors (without / with the inertia margin)
+### Table 6. Robustness of PG-MLP under inertia estimation errors (without / with the inertia margin)
 
 | Inertia estimate | Moves | tau1 median | tau1 max | overshoot max, % | Mpk/Mmax max |
 |---|---|---|---|---|---|

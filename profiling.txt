@@ -1,0 +1,4 @@
+Simulation of 50 000 Euler steps: Numba 0.68 ms, interpreted Python 29 ms, speed-up 43x
+Oracle labels (165): simulations per label median 186 (range 88-397), total 32198; time per label median 0.28 s (one core), total 55 core-seconds
+Training of the PG-MLP ensemble (5 networks, 125 labels): 0.8 s
+Evaluation (evaluation.py): 84600 closed-loop simulations of 4 s in 307 s on 2 cores (7.3 ms per simulation and core); total run 365 s

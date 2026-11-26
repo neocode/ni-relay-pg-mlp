@@ -1,0 +1,215 @@
+== Minimum 1 %-settling time T_opt of the drive model (1) under the limits (LP, numerical estimate)
+-- labelled (40 moves): T*_1% / T_opt median 1.026, range 1.012..1.027
+   Oracle                         t_s / T_opt: median 1.012, min 1.004, max 1.015
+   PG-MLP                         t_s / T_opt: median 1.011, min 1.004, max 1.021; peak torque max 1.016 Mmax
+   2-D interpolation of residual  t_s / T_opt: median 1.013, min 1.004, max 1.016
+   Law (11)                       t_s / T_opt: median 1.021, min 1.002, max 1.453; peak torque max 1.016 Mmax
+   Adaptive N-i                   t_s / T_opt: median 1.024, min 1.006, max 1.490; peak torque max 1.016 Mmax
+   Rescheduled N-i                t_s / T_opt: median 2.400, min 1.013, max 14.084; peak torque max 1.016 Mmax
+   Fixed N-i                      t_s / T_opt: median 2.242, min 0.798, max 10.578; peak torque max 1.901 Mmax
+-- worst30 (30 moves): T*_1% / T_opt median 1.026, range 1.004..1.026
+   PG-MLP                         t_s / T_opt: median 1.022, min 1.000, max 1.033; peak torque max 1.016 Mmax
+   2-D interpolation of residual  t_s / T_opt: median 1.018, min 1.001, max 1.023
+   Law (11)                       t_s / T_opt: median 1.268, min 1.004, max 1.453; peak torque max 1.016 Mmax
+   Adaptive N-i                   t_s / T_opt: median 1.408, min 1.004, max 1.571; peak torque max 1.016 Mmax
+   Rescheduled N-i                t_s / T_opt: median 6.401, min 1.004, max 12.997; peak torque max 1.016 Mmax
+   Fixed N-i                      t_s / T_opt: median 8.826, min 1.037, max 13.986; peak torque max 1.620 Mmax
+-- random30 (30 moves): T*_1% / T_opt median 1.026, range 1.012..1.027
+   PG-MLP                         t_s / T_opt: median 1.012, min 1.004, max 1.021; peak torque max 1.016 Mmax
+   2-D interpolation of residual  t_s / T_opt: median 1.013, min 1.005, max 1.016
+   Law (11)                       t_s / T_opt: median 1.024, min 1.005, max 1.453; peak torque max 1.016 Mmax
+   Adaptive N-i                   t_s / T_opt: median 1.025, min 1.004, max 1.452; peak torque max 1.016 Mmax
+   Rescheduled N-i                t_s / T_opt: median 2.565, min 1.013, max 14.348; peak torque max 1.016 Mmax
+   Fixed N-i                      t_s / T_opt: median 2.401, min 0.803, max 9.767; peak torque max 1.905 Mmax
+PG-MLP over all 100 moves with T_opt: median 1.012, max 1.033
+Fig. 5 move (A = 0.05 rad, kappa = 1.3): T_opt = 0.2161 s, T*_1% = 0.2218 s; t_s: PG-MLP 0.2193 s, 2-D interpolation of residual 0.2190 s, Law (11) 0.2197 s, Adaptive N-i 0.2178 s, Rescheduled N-i 0.8151 s, Fixed N-i 0.6352 s
+Discretisation check (n = 300 vs 600 intervals, 3 moves): max relative difference 0.11 %
+Torque limit 1.016 Mmax (10 worst moves): T_opt decreases by 0.76..0.77 %; PG-MLP t_s / T_opt(1.016) max 1.041
+
+== Overshoot of PG-MLP and comparison with the oracle on the same 40 labelled moves
+PG-MLP, 2500 moves: overshoot > 0.5 % in 1345 moves, > 0.75 % in 61, max 0.93 %
+Oracle  40 labelled moves: tau1 median 0.987, max 0.993; overshoot max 0.50 %
+PG-MLP  40 labelled moves: tau1 median 0.987, max 0.995; overshoot max 0.74 %
+Moves with overshoot above the 1 % band (PG-MLP / PG-MLP with margin): exact: 0 / 0 (max 0.93 %); err10: 3 / 0 (max 1.01 %); under10: 25 / 0 (max 1.58 %); over10: 0 / 0 (max 0.72 %)
+
+== Further residual baselines (2500 test moves, exact inertia ratio)
+2-D interpolation of residual    tau1 median 0.987, 99 % 0.995, max 0.997; overshoot max 0.81 %; RMSE x12 (40 moves) 0.0008; max rel. error K12 0.32 %; safeguard active in 0 moves
+GP residual                      tau1 median 0.988, 99 % 0.995, max 1.000; overshoot max 0.79 %; RMSE x12 (40 moves) 0.0016; max rel. error K12 0.46 %; safeguard active in 0 moves
+Law, x13 = ln min(rho,1)         tau1 median 1.005, 99 % 1.588, max 1.663; overshoot max 7.17 %; RMSE x12 (40 moves) 0.0185; max rel. error K12 6.42 %; safeguard active in 0 moves
+GP kernel after fitting: 1.25**2 * RBF(length_scale=[0.322, 1.47]) + WhiteKernel(noise_level=0.0299)
+
+== Damping ratio of the outer sliding equation, zeta = K12 / (2 sqrt(K13))
+oracle labels (train + test): 1.179
+Law (11) before safeguard: 0.922
+Law (11) safeguard active: 62
+PG-MLP before safeguard: 1.316
+PG-MLP safeguard active: 0
+PG-MLP after safeguard, all evaluation conditions: 1.292
+
+== Non-idealities (500 test moves; tau1 relative to the nominal kinematic reference)
+nominal           Fixed N-i        tau1 median 2.211, max 13.628, unsettled 0; overshoot max 0.04 % (> 1 % in 0); Mpk max 1.911; wpk max 1.0000
+load +0.25 Mmax   Fixed N-i        tau1 median 2.211, max 13.663, unsettled 0; overshoot max 0.00 % (> 1 % in 0); Mpk max 2.153; wpk max 1.0000
+load -0.25 Mmax   Fixed N-i        tau1 median 2.211, max 13.667, unsettled 0; overshoot max 0.00 % (> 1 % in 0); Mpk max 2.161; wpk max 1.0000
+sampling 50 us    Fixed N-i        tau1 median 2.212, max 13.718, unsettled 0; overshoot max 0.21 % (> 1 % in 0); Mpk max 1.972; wpk max 1.0001
+sampling 100 us   Fixed N-i        tau1 median 2.218, max 13.439, unsettled 0; overshoot max 0.20 % (> 1 % in 0); Mpk max 2.048; wpk max 1.0002
+sampling 200 us   Fixed N-i        tau1 median 2.221, max 13.543, unsettled 0; overshoot max 0.22 % (> 1 % in 0); Mpk max 2.192; wpk max 1.0006
+supply -10 %      Fixed N-i        tau1 median 2.211, max 13.639, unsettled 0; overshoot max 0.04 % (> 1 % in 0); Mpk max 1.910; wpk max 1.0000
+supply +10 %      Fixed N-i        tau1 median 2.211, max 13.628, unsettled 0; overshoot max 0.05 % (> 1 % in 0); Mpk max 1.912; wpk max 1.0000
+nominal           Rescheduled N-i  tau1 median 2.637, max 13.505, unsettled 0; overshoot max 0.03 % (> 1 % in 0); Mpk max 1.016; wpk max 1.0000
+load +0.25 Mmax   Rescheduled N-i  tau1 median 2.637, max 13.522, unsettled 0; overshoot max 0.00 % (> 1 % in 0); Mpk max 1.258; wpk max 1.0000
+load -0.25 Mmax   Rescheduled N-i  tau1 median 2.637, max 13.524, unsettled 0; overshoot max 0.00 % (> 1 % in 0); Mpk max 1.266; wpk max 1.0000
+sampling 50 us    Rescheduled N-i  tau1 median 2.638, max 13.542, unsettled 0; overshoot max 0.13 % (> 1 % in 0); Mpk max 1.082; wpk max 1.0000
+sampling 100 us   Rescheduled N-i  tau1 median 2.640, max 13.690, unsettled 0; overshoot max 0.20 % (> 1 % in 0); Mpk max 1.163; wpk max 1.0000
+sampling 200 us   Rescheduled N-i  tau1 median 2.645, max 13.606, unsettled 0; overshoot max 0.22 % (> 1 % in 0); Mpk max 1.324; wpk max 1.0000
+supply -10 %      Rescheduled N-i  tau1 median 2.637, max 13.509, unsettled 0; overshoot max 0.03 % (> 1 % in 0); Mpk max 1.015; wpk max 1.0000
+supply +10 %      Rescheduled N-i  tau1 median 2.636, max 13.512, unsettled 0; overshoot max 0.03 % (> 1 % in 0); Mpk max 1.017; wpk max 1.0000
+nominal           Adaptive N-i     tau1 median 1.003, max 1.531, unsettled 0; overshoot max 4.76 % (> 1 % in 152); Mpk max 1.016; wpk max 1.0000
+load +0.25 Mmax   Adaptive N-i     tau1 median 1.003, max 1.512, unsettled 0; overshoot max 4.46 % (> 1 % in 146); Mpk max 1.258; wpk max 1.0000
+load -0.25 Mmax   Adaptive N-i     tau1 median 1.003, max 1.541, unsettled 0; overshoot max 4.92 % (> 1 % in 159); Mpk max 1.266; wpk max 1.0000
+sampling 50 us    Adaptive N-i     tau1 median 1.022, max 1.560, unsettled 0; overshoot max 5.20 % (> 1 % in 137); Mpk max 1.082; wpk max 1.0000
+sampling 100 us   Adaptive N-i     tau1 median 1.068, max 1.569, unsettled 0; overshoot max 5.20 % (> 1 % in 123); Mpk max 1.163; wpk max 1.0000
+sampling 200 us   Adaptive N-i     tau1 median 1.190, max 1.638, unsettled 0; overshoot max 6.49 % (> 1 % in 113); Mpk max 1.324; wpk max 1.0000
+supply -10 %      Adaptive N-i     tau1 median 1.003, max 1.575, unsettled 0; overshoot max 5.48 % (> 1 % in 165); Mpk max 1.015; wpk max 1.0000
+supply +10 %      Adaptive N-i     tau1 median 1.003, max 1.480, unsettled 0; overshoot max 4.04 % (> 1 % in 140); Mpk max 1.017; wpk max 1.0000
+nominal           PG-MLP           tau1 median 0.988, max 1.001, unsettled 0; overshoot max 0.92 % (> 1 % in 0); Mpk max 1.016; wpk max 1.0000
+load +0.25 Mmax   PG-MLP           tau1 median 0.989, max 1.007, unsettled 0; overshoot max 0.91 % (> 1 % in 0); Mpk max 1.258; wpk max 1.0000
+load -0.25 Mmax   PG-MLP           tau1 median 0.987, max 0.998, unsettled 0; overshoot max 0.95 % (> 1 % in 0); Mpk max 1.266; wpk max 1.0000
+sampling 50 us    PG-MLP           tau1 median 0.997, max 1.028, unsettled 0; overshoot max 0.95 % (> 1 % in 0); Mpk max 1.082; wpk max 1.0000
+sampling 100 us   PG-MLP           tau1 median 1.013, max 1.230, unsettled 0; overshoot max 1.39 % (> 1 % in 24); Mpk max 1.163; wpk max 1.0000
+sampling 200 us   PG-MLP           tau1 median 1.124, max 1.431, unsettled 0; overshoot max 2.73 % (> 1 % in 74); Mpk max 1.324; wpk max 1.0000
+supply -10 %      PG-MLP           tau1 median 0.986, max 1.126, unsettled 0; overshoot max 1.03 % (> 1 % in 7); Mpk max 1.015; wpk max 1.0000
+supply +10 %      PG-MLP           tau1 median 0.989, max 1.016, unsettled 0; overshoot max 0.92 % (> 1 % in 0); Mpk max 1.017; wpk max 1.0000
+
+== Seed groups on all 2500 test moves (five disjoint groups of five seeds)
+MLP raw  max tau1: 1.408 +- 0.008 (worst group 1.420)
+PG-MLP   max tau1: 1.003 +- 0.003 (worst group 1.006)
+
+== Regressors of the residual on different label sets (2500 test moves, exact inertia ratio)
+irregular 125: PG-MLP                              RMSE x12 (40 moves) 0.0036; tau1 median 0.988, 99 % 1.004, max 1.186; overshoot max 1.32 %
+irregular 125: Gaussian process                    RMSE x12 (40 moves) 0.0020; tau1 median 0.987, 99 % 0.996, max 1.116; overshoot max 1.02 %
+irregular 125: linear interpolant                  RMSE x12 (40 moves) 0.0018; tau1 median 0.987, 99 % 0.997, max 1.178; overshoot max 1.39 %
+irregular 60: PG-MLP                               RMSE x12 (40 moves) 0.0071; tau1 median 0.988, 99 % 1.008, max 1.133; overshoot max 1.18 %
+irregular 60: Gaussian process                     RMSE x12 (40 moves) 0.0027; tau1 median 0.987, 99 % 0.999, max 1.192; overshoot max 1.30 %
+irregular 60: linear interpolant                   RMSE x12 (40 moves) 0.0064; tau1 median 0.987, 99 % 1.187, max 1.281; overshoot max 2.02 %
+grid 65: PG-MLP                                    RMSE x12 (40 moves) 0.0031; tau1 median 0.989, 99 % 0.998, max 1.000; overshoot max 0.75 %
+grid 65: Gaussian process                          RMSE x12 (40 moves) 0.0032; tau1 median 0.989, 99 % 1.005, max 1.008; overshoot max 0.92 %
+grid 65: 2-D interpolant                           RMSE x12 (40 moves) 0.0014; tau1 median 0.987, 99 % 0.995, max 0.997; overshoot max 0.97 %
+grid 125: Gaussian process on raw inputs, no law   RMSE x12 (40 moves) 0.0266; tau1 median 1.019, 99 % 1.454, max 1.513; overshoot max 4.78 %
+
+== Label designs (125 labels unless stated; 2500 test moves, exact inertia ratio); GP with separate hyper-parameters for x12 and x13
+grid: PG-MLP                                       RMSE x12 / x13 (40 moves) 0.0023 / 0.0526; tau1 median 0.987, 99 % 0.996, max 1.006, tau1 > 1.05 in 0 moves; overshoot max 0.93 %
+grid: Gaussian process                             RMSE x12 / x13 (40 moves) 0.0016 / 0.0582; tau1 median 0.988, 99 % 0.999, max 1.009, tau1 > 1.05 in 0 moves; overshoot max 0.96 %
+grid: linear interpolant                           RMSE x12 / x13 (40 moves) 0.0009 / 0.0447; tau1 median 0.987, 99 % 0.995, max 0.997, tau1 > 1.05 in 0 moves; overshoot max 0.79 %
+grid 65: PG-MLP                                    RMSE x12 / x13 (40 moves) 0.0031 / 0.0691; tau1 median 0.989, 99 % 0.998, max 1.000, tau1 > 1.05 in 0 moves; overshoot max 0.75 %
+grid 65: Gaussian process                          RMSE x12 / x13 (40 moves) 0.0017 / 0.0340; tau1 median 0.987, 99 % 0.998, max 1.004, tau1 > 1.05 in 0 moves; overshoot max 0.88 %
+grid 65: linear interpolant                        RMSE x12 / x13 (40 moves) 0.0015 / 0.0410; tau1 median 0.987, 99 % 0.995, max 0.998, tau1 > 1.05 in 0 moves; overshoot max 0.99 %
+random 2030: PG-MLP                                RMSE x12 / x13 (40 moves) 0.0036 / 0.0820; tau1 median 0.988, 99 % 1.004, max 1.186, tau1 > 1.05 in 17 moves; overshoot max 1.32 %
+random 2030: Gaussian process                      RMSE x12 / x13 (40 moves) 0.0017 / 0.0333; tau1 median 0.987, 99 % 0.995, max 0.997, tau1 > 1.05 in 0 moves; overshoot max 0.84 %
+random 2030: linear interpolant                    RMSE x12 / x13 (40 moves) 0.0018 / 0.0306; tau1 median 0.987, 99 % 0.997, max 1.178, tau1 > 1.05 in 6 moves; overshoot max 1.39 %
+random 2030, first 60: PG-MLP                      RMSE x12 / x13 (40 moves) 0.0071 / 0.0667; tau1 median 0.988, 99 % 1.008, max 1.133, tau1 > 1.05 in 24 moves; overshoot max 1.18 %
+random 2030, first 60: Gaussian process            RMSE x12 / x13 (40 moves) 0.0019 / 0.0335; tau1 median 0.987, 99 % 0.994, max 1.093, tau1 > 1.05 in 1 moves; overshoot max 1.02 %
+random 2030, first 60: linear interpolant          RMSE x12 / x13 (40 moves) 0.0064 / 0.0458; tau1 median 0.987, 99 % 1.187, max 1.281, tau1 > 1.05 in 114 moves; overshoot max 2.02 %
+random 2031: PG-MLP                                RMSE x12 / x13 (40 moves) 0.0033 / 0.1031; tau1 median 0.988, 99 % 0.998, max 1.004, tau1 > 1.05 in 0 moves; overshoot max 0.97 %
+random 2031: Gaussian process                      RMSE x12 / x13 (40 moves) 0.0011 / 0.0369; tau1 median 0.988, 99 % 0.995, max 0.997, tau1 > 1.05 in 0 moves; overshoot max 0.81 %
+random 2031: linear interpolant                    RMSE x12 / x13 (40 moves) 0.0013 / 0.0670; tau1 median 0.987, 99 % 0.995, max 1.141, tau1 > 1.05 in 2 moves; overshoot max 1.22 %
+random 2032: PG-MLP                                RMSE x12 / x13 (40 moves) 0.0023 / 0.0813; tau1 median 0.987, 99 % 0.997, max 1.142, tau1 > 1.05 in 17 moves; overshoot max 1.18 %
+random 2032: Gaussian process                      RMSE x12 / x13 (40 moves) 0.0013 / 0.0458; tau1 median 0.988, 99 % 0.996, max 0.999, tau1 > 1.05 in 0 moves; overshoot max 0.94 %
+random 2032: linear interpolant                    RMSE x12 / x13 (40 moves) 0.0024 / 0.0468; tau1 median 0.987, 99 % 0.995, max 1.209, tau1 > 1.05 in 2 moves; overshoot max 1.28 %
+Latin hypercube: PG-MLP                            RMSE x12 / x13 (40 moves) 0.0031 / 0.1268; tau1 median 0.988, 99 % 1.274, max 1.412, tau1 > 1.05 in 72 moves; overshoot max 3.35 %
+Latin hypercube: Gaussian process                  RMSE x12 / x13 (40 moves) 0.0017 / 0.0546; tau1 median 0.988, 99 % 0.997, max 1.214, tau1 > 1.05 in 13 moves; overshoot max 1.43 %
+Latin hypercube: linear interpolant                RMSE x12 / x13 (40 moves) 0.0023 / 0.0878; tau1 median 0.987, 99 % 0.995, max 1.199, tau1 > 1.05 in 6 moves; overshoot max 1.19 %
+Sobol: PG-MLP                                      RMSE x12 / x13 (40 moves) 0.0021 / 0.1211; tau1 median 0.988, 99 % 0.996, max 1.208, tau1 > 1.05 in 8 moves; overshoot max 1.41 %
+Sobol: Gaussian process                            RMSE x12 / x13 (40 moves) 0.0013 / 0.0566; tau1 median 0.987, 99 % 0.995, max 0.997, tau1 > 1.05 in 0 moves; overshoot max 0.72 %
+Sobol: linear interpolant                          RMSE x12 / x13 (40 moves) 0.0017 / 0.0829; tau1 median 0.987, 99 % 0.995, max 0.999, tau1 > 1.05 in 0 moves; overshoot max 0.87 %
+Latin hypercube 2036: PG-MLP                       RMSE x12 / x13 (40 moves) 0.0038 / 0.2243; tau1 median 0.988, 99 % 1.002, max 1.326, tau1 > 1.05 in 24 moves; overshoot max 2.17 %
+Latin hypercube 2036: Gaussian process             RMSE x12 / x13 (40 moves) 0.0014 / 0.0496; tau1 median 0.988, 99 % 0.995, max 0.997, tau1 > 1.05 in 0 moves; overshoot max 0.78 %
+Latin hypercube 2036: linear interpolant           RMSE x12 / x13 (40 moves) 0.0023 / 0.0884; tau1 median 0.987, 99 % 0.996, max 1.172, tau1 > 1.05 in 7 moves; overshoot max 1.36 %
+Latin hypercube 2037: PG-MLP                       RMSE x12 / x13 (40 moves) 0.0025 / 0.0531; tau1 median 0.988, 99 % 1.003, max 1.176, tau1 > 1.05 in 14 moves; overshoot max 1.32 %
+Latin hypercube 2037: Gaussian process             RMSE x12 / x13 (40 moves) 0.0015 / 0.0400; tau1 median 0.988, 99 % 0.995, max 0.997, tau1 > 1.05 in 0 moves; overshoot max 0.79 %
+Latin hypercube 2037: linear interpolant           RMSE x12 / x13 (40 moves) 0.0021 / 0.0633; tau1 median 0.987, 99 % 0.995, max 1.122, tau1 > 1.05 in 1 moves; overshoot max 1.01 %
+Sobol 2038: PG-MLP                                 RMSE x12 / x13 (40 moves) 0.0021 / 0.0496; tau1 median 0.988, 99 % 0.997, max 1.119, tau1 > 1.05 in 7 moves; overshoot max 1.08 %
+Sobol 2038: Gaussian process                       RMSE x12 / x13 (40 moves) 0.0010 / 0.0465; tau1 median 0.987, 99 % 0.996, max 1.008, tau1 > 1.05 in 0 moves; overshoot max 0.91 %
+Sobol 2038: linear interpolant                     RMSE x12 / x13 (40 moves) 0.0013 / 0.0531; tau1 median 0.987, 99 % 0.995, max 0.997, tau1 > 1.05 in 0 moves; overshoot max 0.90 %
+Sobol 2039: PG-MLP                                 RMSE x12 / x13 (40 moves) 0.0030 / 0.1376; tau1 median 0.988, 99 % 1.000, max 1.120, tau1 > 1.05 in 8 moves; overshoot max 1.08 %
+Sobol 2039: Gaussian process                       RMSE x12 / x13 (40 moves) 0.0018 / 0.0451; tau1 median 0.988, 99 % 0.996, max 0.997, tau1 > 1.05 in 0 moves; overshoot max 0.89 %
+Sobol 2039: linear interpolant                     RMSE x12 / x13 (40 moves) 0.0023 / 0.1050; tau1 median 0.987, 99 % 0.995, max 1.005, tau1 > 1.05 in 0 moves; overshoot max 0.99 %
+Coverage: fill distance (largest distance from a test move to the nearest label, unit square of (log10 A, kappa)) and median distance of the moves with tau1 > 1.05 to the nearest label
+grid                     125 labels: fill distance 0.167, median distance of all moves 0.070, of the 0 degraded moves -
+grid 65                   65 labels: fill distance 0.171, median distance of all moves 0.072, of the 0 degraded moves -
+random 2030              125 labels: fill distance 0.118, median distance of all moves 0.040, of the 23 degraded moves 0.047
+random 2030, first 60     60 labels: fill distance 0.191, median distance of all moves 0.059, of the 138 degraded moves 0.104
+random 2031              125 labels: fill distance 0.120, median distance of all moves 0.040, of the 2 degraded moves 0.049
+random 2032              125 labels: fill distance 0.110, median distance of all moves 0.039, of the 19 degraded moves 0.055
+Latin hypercube          125 labels: fill distance 0.136, median distance of all moves 0.043, of the 86 degraded moves 0.052
+Sobol                    125 labels: fill distance 0.084, median distance of all moves 0.038, of the 8 degraded moves 0.037
+Latin hypercube 2036     125 labels: fill distance 0.104, median distance of all moves 0.038, of the 31 degraded moves 0.071
+Latin hypercube 2037     125 labels: fill distance 0.107, median distance of all moves 0.041, of the 14 degraded moves 0.057
+Sobol 2038               125 labels: fill distance 0.095, median distance of all moves 0.038, of the 7 degraded moves 0.027
+Sobol 2039               125 labels: fill distance 0.085, median distance of all moves 0.036, of the 8 degraded moves 0.030
+
+== 2-D interpolant and Gaussian process of the residual: inertia margin (random delta, 2500 moves) and displacements below 0.003 rad (200 moves)
+err10 margin     2-D interpolation of residual  tau1 median 1.031, max 1.111; overshoot max 0.72 %, above 1 % in 0 moves; torque max 1.016
+err10 margin     GP residual                    tau1 median 1.031, max 1.116; overshoot max 0.92 %, above 1 % in 0 moves; torque max 1.016
+below 0.003 rad  2-D interpolation of residual  tau1 median 1.324, max 1.788; overshoot max 16.83 %, above 1 % in 168 moves; torque max 1.010
+below 0.003 rad  GP residual                    tau1 median 1.418, max 1.831; overshoot max 21.45 %, above 1 % in 171 moves; torque max 1.010
+err10 margin     PG-MLP (for comparison)        tau1 median 1.030, max 1.117; overshoot max 0.86 %, above 1 % in 0 moves; torque max 1.016
+below 0.003 rad  PG-MLP (for comparison)        tau1 median 1.021, max 1.694; overshoot max 10.61 %, above 1 % in 79 moves; torque max 1.009
+
+== 2-D interpolant and Gaussian process of the residual under inertia estimation errors
+err10    2-D interpolation of residual  tau1 median 0.988, max 1.047; overshoot max 0.99 %; Mpk max 1.127
+err10    GP residual                    tau1 median 0.988, max 1.087; overshoot max 1.06 %; Mpk max 1.127
+under10  2-D interpolation of residual  tau1 median 0.934, max 1.098; overshoot max 1.20 %; Mpk max 1.127
+under10  GP residual                    tau1 median 0.934, max 1.144; overshoot max 1.44 %; Mpk max 1.127
+over10   2-D interpolation of residual  tau1 median 1.036, max 1.059; overshoot max 0.58 %; Mpk max 0.926
+over10   GP residual                    tau1 median 1.036, max 1.057; overshoot max 0.74 %; Mpk max 0.926
+err10    PG-MLP (for comparison)          tau1 median 0.988, max 1.055; overshoot max 1.01 %; Mpk max 1.127
+under10  PG-MLP (for comparison)          tau1 median 0.935, max 1.165; overshoot max 1.58 %; Mpk max 1.127
+over10   PG-MLP (for comparison)          tau1 median 1.035, max 1.060; overshoot max 0.72 %; Mpk max 0.926
+
+== Integration step (20 labelled moves; PG-MLP trained on 10 us labels)
+pg 1e-05         tau1 median 0.9847, max 0.9920; overshoot max 0.73 %; torque max 1.0164
+pg 5e-06         tau1 median 0.9820, max 0.9896; overshoot max 0.72 %; torque max 1.0082
+pg 1e-06         tau1 median 0.9816, max 0.9877; overshoot max 0.80 %; torque max 1.0016
+oracle10 1e-05   tau1 median 0.9866, max 0.9886; overshoot max 0.50 %; torque max 1.0164
+oracle10 1e-06   tau1 median 0.9838, max 0.9871; overshoot max 0.74 %; torque max 1.0016
+oracle1 1e-06    tau1 median 0.9858, max 0.9882; overshoot max 0.50 %; torque max 1.0016
+Oracle labels at 1 us vs 10 us: |dx12| median 0.0025, max 0.0039 (relative K12 0.39 %)
+PG-MLP at 1 us, 2500 test moves: tau1 median 0.985, 99 % 1.089, max 1.115; overshoot above 1 % in 27 moves (max 1.11 %); torque max 1.0016
+PG-MLP at 1 us, 100 moves with T_opt: t_s / T_opt median 1.009, max 1.034 (10 us: 1.033); torque max 1.0016
+Pipeline at 1 us (labels, training, evaluation): labels |dx12| vs 10 us median 0.0033, max 0.0216; 2500 moves: tau1 median 0.987, 99 % 1.006, max 1.119; overshoot above 1 % in 2 moves; torque max 1.0016
+T_opt with 600 vs 300 intervals (12 moves): relative change median -0.017 %, min -0.114 %, max 0.000 %
+Cost map, rho = 0.020: along x13 offsets -2.0...+1.5 the best x12 offset is +0.000...+0.050 with cost <= 3.3 % above the optimum; with x12 fixed the cost rises by up to 167 %
+Cost map, rho = 0.369: along x13 offsets -2.0...+1.5 the best x12 offset is +0.000...+0.010 with cost <= 2.1 % above the optimum; with x12 fixed the cost rises by up to 16 %
+Cost map, rho = 2.835: along x13 offsets -2.0...+1.5 the best x12 offset is +0.000...+0.010 with cost <= 0.5 % above the optimum; with x12 fixed the cost rises by up to 2 %
+
+== Five-fold cross-validation on the 125 training labels (ensembles of five networks, residual target)
+hidden [16, 16]     alpha 1e-04: RMSE x12 0.0063, x13 0.1354
+hidden [8, 8]       alpha 1e-04: RMSE x12 0.0067, x13 0.1402
+hidden [8, 8]       alpha 1e-03: RMSE x12 0.0072, x13 0.1253
+hidden [16, 16, 16] alpha 1e-03: RMSE x12 0.0074, x13 0.1412
+hidden [16, 16, 16] alpha 1e-04: RMSE x12 0.0075, x13 0.1379
+hidden [32, 32]     alpha 1e-04: RMSE x12 0.0075, x13 0.1390
+hidden [32, 32]     alpha 1e-03: RMSE x12 0.0081, x13 0.1385
+hidden [16, 16]     alpha 1e-03: RMSE x12 0.0083, x13 0.1235
+hidden [16]         alpha 1e-04: RMSE x12 0.0085, x13 0.1345
+hidden [16]         alpha 1e-03: RMSE x12 0.0101, x13 0.1347
+hidden [32, 32]     alpha 1e-02: RMSE x12 0.0115, x13 0.1124
+hidden [16]         alpha 1e-02: RMSE x12 0.0117, x13 0.1386
+hidden [16, 16]     alpha 1e-02: RMSE x12 0.0118, x13 0.1151
+hidden [16, 16, 16] alpha 1e-02: RMSE x12 0.0130, x13 0.1079
+hidden [8, 8]       alpha 1e-02: RMSE x12 0.0138, x13 0.1162
+
+== Displacements outside the training range [0.003, 3] rad (200 + 200 moves)
+A < 0.003 rad PG-MLP           tau1 median 1.021, max 1.694; overshoot max 10.61 %; Mpk max 1.009
+A < 0.003 rad PG-MLP clipped   tau1 median 1.328, max 1.786; overshoot max 16.83 %; Mpk max 1.009
+A < 0.003 rad Rescheduled N-i  tau1 median 24.220, max 51.114; overshoot max 0.41 %; Mpk max 1.009
+A < 0.003 rad Adaptive N-i     tau1 median 1.688, max 1.906; overshoot max 19.13 %; Mpk max 1.010
+A > 3 rad     PG-MLP           tau1 median 0.997, max 1.000; overshoot max 0.49 %; Mpk max 1.016
+A > 3 rad     PG-MLP clipped   tau1 median 0.998, max 1.000; overshoot max 0.48 %; Mpk max 1.016
+A > 3 rad     Rescheduled N-i  tau1 median 1.000, max 1.001; overshoot max 0.00 %; Mpk max 1.016
+A > 3 rad     Adaptive N-i     tau1 median 1.000, max 1.001; overshoot max 0.00 %; Mpk max 1.016
+
+== Repeatability of the oracle labels (21 training cases, three restarts from perturbed starts each)
+|x12 - label|: median 0.0004, max 0.0878; |x13 - label|: median 0.094, max 0.901; cost of restarts minus label cost: median 0.0000, min -0.0005
+Restarts (perturbed starts around the law, sigma = 0.3) with a lower cost than the label: 12 of 63
+Cost increase for x13 offsets (-0.5, -0.25, 0, +0.25, +0.5) around the label, median over cases: +0.0683, +0.0199, +0.0000, +0.0033, +0.0049; max: +1.495, +0.855, +0.000, +0.157, +0.578

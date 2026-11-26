@@ -20,7 +20,7 @@ LUT 2-D    RMSE x12 0.0086, max relative error K12 3.42 %, K13 14.4 %
 MLP raw    RMSE x12 0.0118, max relative error K12 4.43 %, K13 26.5 %
 Sensitivity (Fig. 2, b), median tau vs relative error of K12: {'-8 %': 1.399, '-4 %': 1.257, '-2 %': 1.13, '-1 %': 0.982, '+0 %': 0.916, '+1 %': 0.931, '+2 %': 0.956, '+4 %': 1.121, '+8 %': 1.331}
 
-== Seed groups (five disjoint groups of five seeds, 500 moves)
+== Seed groups (five disjoint groups of five seeds, first 500 moves; all 2500 moves: extensions.txt)
 MLP raw  max tau1: 1.388 +- 0.003 (mean +- standard deviation)
 PG-MLP   max tau1: 1.001 +- 0.003 (mean +- standard deviation)
 
@@ -37,4 +37,4 @@ PG-MLP margin  kappa_hat range 0.550..2.317; outside: 461 of 6000, max tau1 1.12
 
 == Implementation
 Safeguard (12) active in 0 of 2500 moves
-PG-MLP: 354 parameters per network, one prediction 0.77 ms (Python)
+PG-MLP: 354 parameters per network (inference timings: see deployment.txt)

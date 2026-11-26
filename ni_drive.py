@@ -1,7 +1,6 @@
 """Relay cascade (N-i switching) control of a DC positioning drive.
 
-Plant data, limits and controller structure follow Sadovoi A. V., Sukhinin B. V., Sokhina Yu. V.,
-Derets A. L. "Relay systems of optimal control of electric drives" (DSTU, 2011), Ch. 6-7.
+Plant data (Table 1 of the paper), limits and controller structure of the N-i switching method.
 Equation numbers in comments refer to the paper (Eqs. (1)-(8)).
 
 Output-shaft model, Eq. (1):
@@ -18,14 +17,14 @@ Run this file to check the analytic synthesis against the published coefficients
 import numpy as np
 from numba import njit
 
-# --- nominal drive data at the output shaft (monograph, Table 7.1) ---
+# --- nominal drive data at the output shaft (Table 1 of the paper) ---
 B23 = 0.182        # 1/J_nom
 A32 = -16435.0     # back-EMF feedback
 A33 = -126.1       # -R/L
 M3 = 845.0         # input gain
 UMAX = 1.1 * 27.0  # voltage limit (forcing factor 1.1)
-WMAX = 1.19        # admissible speed, rad/s
-MMAX = 25.2        # admissible torque, N*m
+WMAX = 1.19        # admissible speed, rad/s: rated motor speed 428 rad/s / gear ratio 360
+MMAX = 25.2        # admissible torque, N*m: rated motor torque 30 W / 428 rad/s * 360 (gear losses neglected)
 TOLF = 0.01        # settling band: |E1| <= 1 % of the displacement, Eq. (8)
 
 
@@ -34,7 +33,7 @@ def design_limits(kappa_hat=1.0):
     b = B23 / kappa_hat
     V = WMAX
     A = b * MMAX                 # 4.586 rad/s^2 at kappa_hat = 1
-    J = b * M3 * UMAX            # 4568 rad/s^3 at kappa_hat = 1 (the monograph rounds to 4.6e3)
+    J = b * M3 * UMAX            # 4568 rad/s^3 at kappa_hat = 1 (rounded to 4.6e3 in the earlier analytic design)
     return V, A, J
 
 
@@ -147,6 +146,49 @@ def simulate(theta_ref, K12, K13, K23, V, A, Jd, kappa, Mc, T, dt, rec_every, to
     return ts, ovs, Mpeak, sw1, sw2, rec[:k], wpk
 
 
+@njit(cache=True)
+def simulate_ext(theta_ref, K12, K13, K23, V, A, Jd, kappa, Mc, T, dt, tolf, hold, u_scale, M0):
+    """Simulation with non-idealities (used by extensions.py, non-idealities table): the controller samples the
+    errors and updates the relay output only every `hold` integration steps (sample-and-hold with
+    period hold * dt), and the actual voltage limit is u_scale * Umax (supply error). The move starts at rest
+    with the torque M0 (M0 = Mc: static state of a loaded drive, no initial acceleration)."""
+    b = B23 / kappa
+    n = int(T / dt)
+    th = 0.0; w = 0.0; M = M0; U = 0.0
+    Mpeak = 0.0; ovs = 0.0; wpk = 0.0; ts = 0.0
+    tol = max(tolf * theta_ref, 1e-6)
+    for i in range(n):
+        if i % hold == 0:
+            E1 = theta_ref - th
+            E2 = -w
+            E3 = -b * (M - Mc)
+            s1 = E1 + K12 * E2 + K13 * E3
+            E2s = -V if s1 > 0 else V
+            s2 = E2 - E2s + K23 * E3
+            E3s = -A if s2 > 0 else A
+            s3 = E3 - E3s
+            U = u_scale * UMAX if s3 > 0 else -u_scale * UMAX
+        dth = w
+        dw = b * (M - Mc)
+        dM = A32 * w + A33 * M + M3 * U
+        th += dt * dth; w += dt * dw; M += dt * dM
+        if abs(M) > Mpeak: Mpeak = abs(M)
+        if abs(w) > wpk: wpk = abs(w)
+        if th - theta_ref > ovs: ovs = th - theta_ref
+        if abs(theta_ref - th) > tol: ts = (i + 1) * dt
+    return ts, ovs, Mpeak, wpk
+
+
+def run_ext(theta_ref, K, kappa=1.0, kappa_hat=None, Mc=0.0, dt=1e-5, T=4.0, hold=1, u_scale=1.0):
+    """One move with load torque Mc (starting from the static state M(0) = Mc), controller period hold * dt and
+    supply error u_scale (see simulate_ext)."""
+    kh = kappa if kappa_hat is None else kappa_hat
+    V, A, J = design_limits(kh)
+    ts, ovs, Mp, wpk = simulate_ext(theta_ref, K[0], K[1], K[2], V, A, J, kappa, Mc, T, dt, TOLF, hold, u_scale, Mc)
+    settled = ts < T - 0.05
+    return dict(ts=ts if settled else np.inf, ovs=ovs / theta_ref, Mpeak=Mp, wpk=wpk)
+
+
 def run(theta_ref, K, kappa=1.0, kappa_hat=None, Mc=0.0, dt=1e-5, rec_every=100, T=None, tolf=None):
     """Simulate one rest-to-rest move of amplitude theta_ref [rad] with K = (K12, K13, K23).
 
@@ -169,7 +211,7 @@ def run(theta_ref, K, kappa=1.0, kappa_hat=None, Mc=0.0, dt=1e-5, rec_every=100,
 
 if __name__ == "__main__":
     for label, lim in (("Triple-integrator example (limits 2, 3, 10)", (2, 3, 10)),
-                       ("Monograph drive, limits (1.19, 4.58, 4.6e3) -> matrix (7.4)", (1.19, 4.58, 4600.0))):
+                       ("Earlier analytic design of the drive, limits (1.19, 4.58, 4.6e3)", (1.19, 4.58, 4600.0))):
         K = ni_coefficients(*lim)
         print(f"{label}: K = {K}; roots of K13 p^2 + K12 p + 1 = 0: {np.roots([K[1], K[0], 1.0]).real.round(2)}; "
               f"-1/K23 = {-1 / K[2]:.2f}")
